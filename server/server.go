@@ -1,9 +1,9 @@
 package main
 
 import (
-	"log"
 	"encoding/json"
 	"io/ioutil"
+	"log"
 	"net/http"
 )
 
@@ -26,36 +26,37 @@ type USD_BRL struct {
 }
 
 func main() {
-  http.HandleFunc("/", GetUSDHandler)
-  http.ListenAndServe(":8080", nil)
+	http.HandleFunc("/", GetUSDHandler)
+	http.ListenAndServe(":8080", nil)
 }
 
 func GetUSDHandler(w http.ResponseWriter, r *http.Request) {
-  usd, err := GetPrice()
-  if err != nil {
-    panic(err)
-  }
+	usd, err := GetPrice()
+	if err != nil {
+		panic(err)
+	}
 
-  json.NewEncoder(w).Encode(usd)
+	w.Write([]byte(usd.USDBRL.Bid))
+	// json.NewEncoder(w).Encode(usd)
 }
 
 func GetPrice() (*USD_BRL, error) {
-  res, err := http.Get(urlAPI)
-  if err != nil {
-    return nil, err
-  }
-  defer res.Body.Close()
-
-  body, err := ioutil.ReadAll(res.Body)
+	res, err := http.Get(urlAPI)
 	if err != nil {
 		return nil, err
 	}
-  log.Print(string(body))
+	defer res.Body.Close()
 
-  var usd USD_BRL
-  err = json.Unmarshal(body, &usd)
-  if err != nil {
-    return nil, err
-  }
-  return &usd, nil
+	body, err := ioutil.ReadAll(res.Body)
+	if err != nil {
+		return nil, err
+	}
+	log.Print(string(body))
+
+	var usd USD_BRL
+	err = json.Unmarshal(body, &usd)
+	if err != nil {
+		return nil, err
+	}
+	return &usd, nil
 }
