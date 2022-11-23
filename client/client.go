@@ -2,7 +2,7 @@ package main
 
 import (
 	"fmt"
-	"io/ioutil"
+	"io"
 	"net/http"
 )
 
@@ -14,7 +14,7 @@ func main() {
 		panic(err)
 	}
 
-	fmt.Println(info)
+	fmt.Printf("BID value: %v \n", info)
 }
 
 func GetBid() (string, error) {
@@ -23,7 +23,7 @@ func GetBid() (string, error) {
 		return "", err
 	}
 	defer res.Body.Close()
-	body, err := ioutil.ReadAll(res.Body)
+	body, err := io.ReadAll(res.Body)
 	if err != nil {
 		return "", err
 	}
